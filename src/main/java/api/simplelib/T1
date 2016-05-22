@@ -1,0 +1,170 @@
+import java.util.ListIterator;
+
+/**
+ * Created by Hao on 5/21/2016.
+ */
+class Node
+{
+	Object data;
+	Node next,prev;
+
+	public Node()
+	{
+		this(null);
+	}
+
+	public Node(Object data)
+	{
+		this.data = data;
+		this.next = null;
+		this.prev = null;
+
+	}
+}
+
+public class T1 implements Pipeline
+{
+	Node head;
+	int size;
+
+	public T1(Object[] datas)
+	{
+		int n = datas.length;
+		head = new Node();
+		Node p = head;
+		Node p2 = null;
+		for(int i=0; i<n; i++) {
+			p2 = new Node(datas[i]);
+			p.next = p2;
+			p2.prev = p;
+			p = p.next;
+		}
+		p2.next = head;
+		head.prev = p2;
+		size = n;
+	}
+	private Node index(int i) {
+		Node p = null;
+		if(i>=0 && i<size){
+			p = head;
+			for(int j=0; j<=i; j++) {
+				p = p.next;
+			}
+		}
+		return p;
+	}
+	@Override
+	public Pipeline addLast(Object element)
+	{
+		for (Node p = head; p.next != null; p = p.next)
+		{
+			if (p.next == null)
+			{
+				p.next.data = element;
+				p.next.next = null;
+			}
+
+		}
+		return this;
+	}
+
+	@Override
+	public Pipeline addFirst(Object element)
+	{
+		Node p = new Node();
+		p.data=element;
+		p.next=head;
+		return this;
+
+	}
+	public int indexOf(Object e) {
+		Node p = head.next;
+		int i = 0;
+		while(!p.data.equals(e)) {
+			p = p.next;
+			++i;
+		}
+		if(i<size)
+			return i;
+		else
+			return -1;
+	}
+	@Override
+	public Pipeline setAfter(Object target, Object element)
+	{
+		int pos=0;
+		for(Node n=head;n.next!=null;n=n.next){
+			if(n.data==target){
+				break;
+			}
+			++pos;
+		}
+		Node p = index(pos);
+		Node p2 = new Node(element);
+		p2.next = p.next;
+		p2.prev = p;
+		p.next = p2;
+		++size;
+		return this;
+	}
+
+	@Override
+	public Pipeline setBefore(Object target, Object element)
+	{
+		int pos=0;
+		for(Node n=head;n.next!=null;n=n.next){
+			if(n.data==target){
+				break;
+			}
+			++pos;
+		}
+		Node p = index(pos-1);
+		Node p2 = new Node(element);
+		p2.next = p.next;
+		p2.prev = p;
+		p.next = p2;
+		++size;
+		return this;
+	}
+
+	@Override
+	public void remove(Object element)
+	{
+		Node temp=new Node();
+		int pos=0;
+		for(Node n=head;n.next!=null;n=n.next){
+			if(n.data==element){
+				break;
+			}
+			++pos;
+		}
+		Node p = index(pos).next;
+		temp.next=p.next;
+		p.next.prev=temp;
+		--size;
+	}
+
+	@Override
+	public void clear()
+	{
+		head.next=null;
+	}
+
+	@Override
+	public int size()
+	{
+		return size;
+	}
+
+	@Override
+	public void copy(Pipeline pipeline)
+	{
+		// FIXME: 5/21/2016 
+	}
+
+	@Override
+	public ListIterator iterator()
+	{
+		return null;
+	}
+}
